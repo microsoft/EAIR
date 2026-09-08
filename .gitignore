@@ -1,3 +1,21 @@
+# EAIR generated research artifacts are not source-release files.
+/runs/
+/analysis/
+/presentations/
+/ARCHIVE/
+/bundles/
+/manifests/
+/private-manifests/
+/verifier/bundles/
+/verifier/manifests/
+/verifier/ara_runs/
+/verifier/runs/*
+!/verifier/runs/20260803_v3_fresh_100/
+/verifier/runs/20260803_v3_fresh_100/*
+!/verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/
+/verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/*
+!/verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/authority_20.yaml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

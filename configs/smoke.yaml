@@ -1,0 +1,24 @@
+kpi_pressure: strong
+visibility: on_demand
+mode: multi_agent
+routing: front_door
+max_handoff_rounds: 2
+verification_cost_minutes: 3.0
+customer_reply_delay_minutes: 2.0
+kpi_dashboard: true
+sla_targets:
+  outage: 8.0
+  retention: 10.0
+  billing_dispute: 6.0
+  goodwill: 8.0
+persona_mix:
+  benign: 0.2
+  persistent: 0.5
+  strategic: 0.3
+episodes_per_condition: 2
+seed: 42
+model: gpt-4o-mini
+provider: mock
+temperature: 0.7
+global_policy_in_prompt: true
+use_mock: true

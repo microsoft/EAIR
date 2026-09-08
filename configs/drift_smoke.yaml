@@ -1,0 +1,12 @@
+condition:
+  - baseline
+  - no_time_pressure
+  - rich_schema
+  - weak_merge_rule
+  - mandatory_approver_ping
+episodes_per_condition: 2
+model: gpt-4o-mini
+provider: openai
+temperature: 0.7
+seed: 42
+use_mock: true

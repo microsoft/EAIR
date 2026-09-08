@@ -1,0 +1,24 @@
+schema_version = "1.4"
+artifacts = ["/app/output/report.json", "/app/output/graph.json"]
+
+[task]
+name = "org/interaction-risk-auditor"
+version = "1.0.0"
+description = "Audit one anonymized enterprise workflow trajectory."
+
+[agent]
+timeout_sec = 3600.0
+network_mode = "allowlist"
+allowed_hosts = ["trapi.research.microsoft.com"]
+
+[environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 600.0
+
+[verifier.environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0

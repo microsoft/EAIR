@@ -1,0 +1,18 @@
+include pyproject.toml setup.py _toolkit_build.py MANIFEST.in README.md
+prune tests
+include tests/test_toolkit_packaging.py
+include tests/test_run_risk.py
+prune runs
+prune analysis
+prune bundles
+prune manifests
+prune private_sources
+prune credentials
+prune tacit_collusion
+prune aggregator_sway
+prune verifier/runs
+prune verifier/ara_runs
+prune verifier/d1ra_recovery_runs
+prune verifier/d1ra_recovery_runs_1
+prune verifier/d1ra_recovery_runs_2
+global-exclude __pycache__ *.py[cod] .env .env.* *.pem *.key

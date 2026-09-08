@@ -1,0 +1,12 @@
+condition:
+  - A
+  - B
+  - C
+  - D
+  - E
+seeds: 4
+seed_start: 20042
+model: gpt-5.6-sol_2026-07-09
+provider: trapi
+temperature: 0.7
+use_mock: false

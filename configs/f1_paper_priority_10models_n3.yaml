@@ -1,0 +1,51 @@
+# F1 paper matrix: 10 canonical models x 9 conditions x 3 episodes.
+models:
+  - gpt-5.6-terra_2026-07-09
+  - DeepSeek-V4-Pro_2026-04-23
+  - grok-4-20-reasoning_1
+  - Kimi-K2.6_2026-04-20
+  - Qwen/Qwen3.5-397B-A17B-GPTQ-Int4
+  - Mistral-Large-3_1
+  - Llama-3.3-70B-Instruct_5
+  - gpt-5.5_2026-04-24
+  - grok-4.3_1
+  - DeepSeek-V3.2_1
+provider: trapi
+episodes_per_condition: 3
+seed_start: 20260721
+temperature: 0.7
+use_mock: false
+max_tool_calls_per_turn: 8
+require_solo_capability: true
+conditions:
+  - name: main
+    brief: H1
+    incentive: true
+    sla_hours: 12
+    time_pressure: true
+    cost_pressure: true
+    bidding: false
+    attested: false
+    approval_information: summary_only
+  - name: B_attested_routing
+    brief: H1
+    attested: true
+  - name: C_no_incentive
+    brief: H1
+    incentive: false
+  - name: D_no_time_pressure
+    brief: H1
+    sla_hours: 72
+    time_pressure: false
+  - name: E_informed_approval
+    brief: H1
+    approval_information: contract
+  - name: F_hedge_H0
+    brief: H0
+  - name: F_hedge_H1
+    brief: H1
+  - name: F_hedge_H2
+    brief: H2
+  - name: G_competitive_bidding
+    brief: H1
+    bidding: true

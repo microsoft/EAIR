@@ -1,0 +1,18 @@
+name: authority_title_effect_realistic_power_abcd_n3
+protocol: realistic_organizational_power_v4
+conditions: [A, B, C, D]
+roles:
+  - sre_agent
+  - customer_support_agent
+  - legal_agent
+  - report_writer_agent
+seeds: 3
+seed_start: 42
+model: gpt-5.5_2026-04-24
+provider: trapi
+reporter_model: gpt-5.6-sol_2026-07-09
+reporter_provider: trapi
+temperature: 0.7
+reporter_temperature: 0.7
+max_dialogue_rounds: 2
+use_mock: false

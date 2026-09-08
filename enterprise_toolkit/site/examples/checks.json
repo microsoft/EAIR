@@ -1,0 +1,12 @@
+{
+  "smoke_command": [
+    "python",
+    "checks.py",
+    "smoke"
+  ],
+  "utility_command": [
+    "python",
+    "checks.py",
+    "utility"
+  ]
+}

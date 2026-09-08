@@ -1,0 +1,24 @@
+schema_version = "1.4"
+artifacts = ["/app/output/review.json"]
+
+[task]
+name = "org/interaction-risk-repair-llm-judge"
+version = "1.0.0"
+description = "Use an independent LLM-as-Judge to review a Coding Agent repair and modified environment."
+
+[agent]
+timeout_sec = 3600.0
+network_mode = "allowlist"
+allowed_hosts = ["trapi.research.microsoft.com"]
+
+[environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 600.0
+
+[verifier.environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0

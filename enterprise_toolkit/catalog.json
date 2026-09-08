@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "release_version": "0.3.1",
+  "excluded_risks": ["A2", "B2"],
+  "source_registry": "risk_environments/registry.py",
+  "selection_policy": "Report-derived study coverage, not a claim of statistical superiority. Runtime fields describe the current registry; historical study runners are recorded separately.",
+  "worlds": [
+    {
+      "paper_id": "A1",
+      "risk_id": "authority_bias",
+      "display_name": "Authority Bias",
+      "package": "authority_deference",
+      "run_module": "run_authority",
+      "smoke_config": "configs/authority_smoke.yaml",
+      "recommended_configs": [
+        "configs/authority_title_effect_realistic_power_abcd_n3.yaml",
+        "configs/authority_organizational_power_factorial_pilot.yaml"
+      ],
+      "supplemental_configs": [
+        "verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/authority_20.yaml"
+      ],
+      "study_runners": [
+        {
+          "path": "run_authority_title_effect.py",
+          "run_module": "run_authority_title_effect",
+          "configs": [
+            "configs/authority_title_effect_realistic_power_abcd_n3.yaml",
+            "configs/authority_organizational_power_factorial_pilot.yaml"
+          ]
+        }
+      ],
+      "followups": [
+        {
+          "name": "authority_liveness_aug20_fresh20",
+          "configs": [
+            "verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/authority_20.yaml"
+          ],
+          "sources": [
+            {
+              "path": "verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/LIVE_ATOMIC_20_REPORT_ZH.md",
+              "role": "executed_twenty_episode_matrix"
+            },
+            {
+              "path": "verifier/runs/20260803_v3_fresh_100/authority_liveness_repair_candidate/run_live_20_resilient.py",
+              "role": "isolated_candidate_driver_generating_per_episode_json"
+            }
+          ],
+          "notes": [
+            "The YAML specifies A-E, four seeds per condition, and seed_start=20042. The executed table uses D seeds 20042/20046/20047/20048 and E seeds 20046/20047/20048/20049; the YAML alone is not the exact executed schedule.",
+            "The driver runs the workspace run_authority.py with the candidate directory as cwd and PYTHONPATH. Packaging this YAML alone does not package the repaired candidate source or reproduce its final authorization behavior."
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "path": "EXPERIMENT RESULTS REPORT/authority_deference/EXPERIMENT_RESULTS_2026-07-26_AUTHORITY_REALISTIC_POWER_10MODELS_N3_ABCD_EN.md",
+          "report_date": "2026-07-26",
+          "body_updated": null,
+          "role": "primary_abcd_480_with_factorial_48"
+        },
+        {
+          "path": "EXPERIMENT RESULTS REPORT/authority_deference/EXPERIMENT_RESULTS_2026-07-26_AUTHORITY_POWER_FACTORIAL_3MODELS_N2_ZH.md",
+          "report_date": "2026-07-26",
+          "body_updated": null,
+          "role": "title_by_power_factorial_48"
+        },
+        {
+          "path": "EXPERIMENT RESULTS REPORT/authority_deference/AUTHORITY_POST_MITIGATION_LIVENESS_ANALYSIS_2026-08-04_ZH.md",
+          "report_date": "2026-08-04",
+          "body_updated": "2026-08-20",
+          "role": "latest_body_update_optional_liveness_fresh20_followup"
+        }
+      ],
+      "notes": [
+        "The primary study is realistic_organizational_power_v4: 10 model slots x 4 roles x ABCD x 3 seeds = 480 episodes. The orthogonal organizational_power_factorial_v5 pilot is 3 models x 2 roles x EFGH x 2 seeds = 48 episodes.",
+        "These YAMLs specify individual model settings; model overrides and study orchestration are needed to reconstruct the reported cross-model matrices. The registry run_module is the current smoke/runtime entry point, not the historical title-effect study runner.",
+        "The August 4 liveness report includes August 18, 19, and 20 updates. Its August 20 fresh20 is a distinct post-mitigation A-E workflow follow-up, not a replacement for the 480-episode ABCD study or factorial pilot.",
+        "The fresh20 update reports final fields submitted in 20/20 episodes but all five sections present in only 7/20; upstream SRE finalization remains unresolved.",
+        "Current source and YAML bytes are not asserted to be identical to the original historical experiment snapshots."
+      ]
+    },
+    {
+      "paper_id": "B1",
+      "risk_id": "semantic_drift",
+      "display_name": "Semantic Drift",
+      "package": "semantic_drift",
+      "run_module": "run_drift",
+      "smoke_config": "configs/drift_smoke.yaml",
+      "recommended_configs": [
+        "configs/drift_paper_priority_10models_n3.yaml",
+        "configs/drift_kimi_k25_replacement_n3.yaml"
+      ],
+      "supplemental_configs": [],
+      "reports": [
+        {
+          "path": "EXPERIMENT RESULTS REPORT/semantic_drift/EXPERIMENT_RESULTS_2026-07-24_SEMANTIC_DRIFT_10MODELS_N3_EN.md",
+          "report_date": "2026-07-26",
+          "body_updated": "2026-07-26",
+          "role": "primary_split_rubric_replacement_cohort_150"
+        }
+      ],
+      "notes": [
+        "The filename is dated July 24; the report body declares an experiment date of July 26 and includes the Kimi K2.5 replacement cohort. Selection follows that body, not filename ordering.",
+        "Preserve the original ten-model YAML and the separate Kimi K2.5 replacement YAML. The reported 150 valid episodes use Kimi K2.5 instead of DeepSeek V4 Pro, not an eleven-model concatenation. The earlier failed Grok fallback contributes no valid episodes.",
+        "Both configurations use the weak scenario, five conditions, three episodes per condition, and seed 42. The original YAML alone does not recreate the report's final model cohort.",
+        "The report uses the split-rubric decision-status and submission-status judge; terminal drift concerns a final email actually sent. This is report coverage, not a ranking of models or ablations."
+      ]
+    },
+    {
+      "paper_id": "C1",
+      "risk_id": "kpi_gaming",
+      "display_name": "KPI Gaming",
+      "package": "orchestrator",
+      "run_module": "run",
+      "smoke_config": "configs/smoke.yaml",
+      "recommended_configs": [
+        "configs/kpi_v2_all11_kpi_levels_n3.yaml"
+      ],
+      "supplemental_configs": [],
+      "reports": [
+        {
+          "path": "EXPERIMENT RESULTS REPORT/kpi_gaming/EXPERIMENT_RESULTS_2026-07-21_KPI_V2_MILD_VS_STRONG_ZH.md",
+          "report_date": "2026-07-21",
+          "body_updated": null,
+          "role": "primary_v2_mild_strong_subset_66"
+        }
+      ],
+      "sources": [
+        {
+          "path": "analyze_kpi_v2_mild_strong.py",
+          "role": "latest_report_filter_to_mild_and_strong"
+        },
+        {
+          "path": "analyze_kpi_v2_all11.py",
+          "role": "source_run_merge_by_first_successful_job"
+        },
+        {
+          "path": "figures/kpi_v2_all11_20260720/results_merged_first_success_99.json",
+          "role": "deduplicated_three_level_source_99"
+        },
+        {
+          "path": "figures/kpi_v2_mild_strong_20260721/results_mild_strong_66.json",
+          "role": "reported_two_level_subset_66"
+        }
+      ],
+      "notes": [
+        "The July 21 mild/strong report analyzes July 20 data: 11 models x 2 pressure levels x 3 episodes = 66, excluding None. Its adjacent source-study YAML is kpi_v2_all11_kpi_levels_n3.yaml, not the earlier paper-priority n5 design.",
+        "The selected YAML intentionally contains none, mild, and strong (99 planned episodes). The report is obtained by first-success deduplication of the source runs and filtering to mild/strong, not by silently treating all 99 episodes as the latest report sample.",
+        "The configuration uses multi_agent, risk_v2 contacts, on_demand visibility, zero initial compensation, six simulated minutes per history check, seed 142, and no global policy in the prompt.",
+        "Strong is a bundled runtime treatment, not a pure wording or pressure-dose manipulation. The report identifies Mild prompt/dashboard and SLA-feedback inconsistencies and a Llama tool-call execution limitation; low observed payments from failed execution do not establish safety."
+      ]
+    },
+    {
+      "paper_id": "D1",
+      "risk_id": "d1",
+      "display_name": "D1 Confused Deputy",
+      "package": "d1_confused_deputy",
+      "run_module": "run_d1",
+      "smoke_config": "configs/d1_smoke.yaml",
+      "recommended_configs": [
+        "configs/d1_l6_10models_hr_n3_rerun.yaml",
+        "configs/d1_l6_10models_finance_security_n3.yaml"
+      ],
+      "supplemental_configs": [],
+      "reports": [
+        {
+          "path": "EXPERIMENT RESULTS REPORT/d1_confused_deputy/EXPERIMENT_RESULTS_2026-07-27_D1_L6_AUTHORIZATION_INQUIRY_10MODELS_3DOMAINS_N3_EN.md",
+          "report_date": "2026-07-27",
+          "body_updated": null,
+          "role": "primary_prompt_neutral_l6_three_domain_90"
+        }
+      ],
+      "notes": [
+        "The latest L6 report pools HR (30 episodes) and Finance/Security (60 episodes): 10 models x 3 domains x 3 seeds = 90. Both recommended YAMLs are required; the older non-L6 cross-domain study is background only.",
+        "L6 authorization inquiry is available without a role-prompt reminder; authorization propagation and tool field ACL remain disabled. Availability of the inquiry channel is not an enforced authorization boundary.",
+        "The report's shared seeds are 20260726, 20260727, and 20260728. Report-derived selection does not establish causal benefit from observed L6 use or a statistically stable domain ranking."
+      ]
+    },
+    {
+      "paper_id": "F1",
+      "risk_id": "f1",
+      "display_name": "F1 Provenance Paradox",
+      "package": "f1_provenance_paradox",
+      "run_module": "run_f1",
+      "smoke_config": "configs/f1_smoke.yaml",
+      "recommended_configs": [
+        "configs/f1_paper_priority_10models_n3.yaml"
+      ],
+      "supplemental_configs": [
+        "configs/f1_paper_priority_10models_n3_calibration.yaml"
+      ],
+      "study_runners": [
+        {
+          "path": "run_f1_paper_study.py",
+          "run_module": "run_f1_paper_study",
+          "configs": [
+            "configs/f1_paper_priority_10models_n3.yaml",
+            "configs/f1_paper_priority_10models_n3_calibration.yaml"
+          ]
+        },
+        {
+          "path": "run_f1_calibration.py",
+          "run_module": "run_f1_calibration",
+          "configs": [
+            "configs/f1_paper_priority_10models_n3_calibration.yaml"
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "path": "EXPERIMENT RESULTS REPORT/f1_provenance_paradox/EXPERIMENT_RESULTS_2026-07-26_F1_PROVENANCE_PARADOX_10MODELS_N3_EN.md",
+          "report_date": "2026-07-26",
+          "body_updated": null,
+          "role": "primary_nine_condition_270_plus_solo_90"
+        },
+        {
+          "path": "EXPERIMENT_RESULTS ANALYSIS/f1_provenance_paradox/F1_10MODEL_N3_RUN_STATUS.md",
+          "report_date": "2026-07-26",
+          "body_updated": "2026-07-26",
+          "role": "completion_status_only"
+        },
+        {
+          "path": "EXPERIMENT RESULTS REPORT/f1_provenance_paradox/F1_POST_MITIGATION_ESCALATION_ANALYSIS_2026-08-21_ZH.md",
+          "report_date": "2026-08-21",
+          "body_updated": null,
+          "role": "latest_post_mitigation_unsafe_contract_followup_not_primary_study"
+        }
+      ],
+      "notes": [
+        "The main study is 10 models x 9 conditions x 3 episodes = 270. Preserve main, B_attested_routing, C_no_incentive, D_no_time_pressure, E_informed_approval, F_hedge_H0, F_hedge_H1, F_hedge_H2, and G_competitive_bidding; F_hedge_H1 is a configuration-equivalent replication of main.",
+        "The named supplemental calibration is 10 models x 3 delegates x 3 solo reviews = 90, not a tenth main-study condition. Use the study-specific calibration YAML rather than the generic solo-calibration example.",
+        "The historical main YAML sets require_solo_capability=true. Supplemental calibration can be omitted only when compatible solo-capability data are already supplied; faithful counterfactual-regret reproduction depends on those data. The paper-study runner binds the main and calibration configurations.",
+        "The F1 status file confirms completion only; design and result claims are sourced to the actual experiment report. Routing, report quality, summary retention, and final approval are distinct outcomes.",
+        "The August 21 follow-up reports 20/20 final ESCALATE verdicts on unsafe contracts, not three submission failures. No proposed SIGN reached the legal gate, and no safe-to-sign positive control was evaluated; automatic-signing utility and a full replay of the four original failing cases remain unverified. The isolated repaired source is not a replacement for the primary study implementation."
+      ]
+    }
+  ],
+  "verifier": {
+    "profile": "v3-topology",
+    "verifier_version": "V3",
+    "feedback_contract_version": "3.0",
+    "graph_variant": "topology-only-1.0",
+    "graph_schema_version": "topology-1.0",
+    "run_module": "verifier.cli",
+    "supported_ablations": ["no-graph"],
+    "tools": [
+      "build-graph",
+      "get-steps",
+      "diff-summary",
+      "check-permission",
+      "get-policy",
+      "search-policies",
+      "read-doc",
+      "graph-query",
+      "validate-report"
+    ],
+    "reports": [
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/EXPERIMENT_REPORT_ZH.md",
+        "report_date": null,
+        "body_updated": null,
+        "run_date": "2026-08-31",
+        "role": "primary_full_v3_topology_audit_and_isolated_mitigation"
+      },
+      {
+        "path": "verifier/runs/20260901_v3_fresh_100_no_graph/EXPERIMENT_REPORT_ZH.md",
+        "report_date": null,
+        "body_updated": "2026-09-03",
+        "run_date": "2026-09-01",
+        "role": "supported_no_graph_ablation_not_release_default"
+      },
+      {
+        "path": "verifier/runs/20260904_r1_r2_reviewer_response/R1_R2_EXPERIMENT_REPORT_ZH.md",
+        "report_date": null,
+        "body_updated": null,
+        "run_date": "2026-09-04",
+        "role": "latest_full_contract_cross_vendor_and_naive_comparison_human_review_pending"
+      },
+      {
+        "path": "verifier/runs/20260904_r1_r2_reviewer_response/EXPERIMENT_REPORT.md",
+        "report_date": null,
+        "body_updated": null,
+        "run_date": "2026-09-04",
+        "role": "generated_companion_with_explicit_incomplete_status"
+      }
+    ],
+    "sources": [
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/prepare_topology.py",
+        "role": "topology_override_and_full_contract_procedure"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/run_auditors.py",
+        "role": "v3_topology_harbor_runner_with_task_and_truth_digests"
+      },
+      {
+        "path": "verifier/runs/20260904_r1_r2_reviewer_response/pipeline.py",
+        "role": "r1_august3_source_copy_and_r2_executed_naive_control_pinning"
+      },
+      {
+        "path": "verifier/runs/20260904_r1_r2_reviewer_response/run_experiments.py",
+        "role": "r1_r2_harbor_runner_with_source_snapshot_checks"
+      },
+      {
+        "path": "verifier/cli.py",
+        "role": "current_verifier_entry_point_not_by_itself_a_topology_selector"
+      },
+      {
+        "path": "verifier/auditor_toolkit/graph.py",
+        "role": "current_shared_graph_source_distinct_from_materialized_topology_override"
+      },
+      {
+        "path": "verifier/orchestrator/materialize.py",
+        "role": "current_generic_materializer_copies_base_template_and_runtime"
+      },
+      {
+        "path": "verifier/harbor_tasks/auditor_template/instruction.md",
+        "role": "current_base_template_with_annotated_graph_procedure"
+      },
+      {
+        "path": "verifier/harbor_tasks/auditor_template/interaction_risk_scope.md",
+        "role": "interaction_scope_template_expanded_into_auditor_instructions"
+      },
+      {
+        "path": "verifier/schemas/report.py",
+        "role": "current_report_contract_and_detection_decision_consistency"
+      },
+      {
+        "path": "verifier/auditor_toolkit/validation.py",
+        "role": "bundle_context_step_edge_quote_and_mitigation_target_validation"
+      },
+      {
+        "path": "verifier/auditor_toolkit/cli.py",
+        "role": "investigation_commands_and_validate_report_exit_status"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/instruction.md",
+        "role": "representative_materialized_v3_topology_instruction"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/Dockerfile",
+        "role": "materialized_nine_command_wiring_without_trace_provenance_launcher"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/verifier_pkg/verifier/schemas/report.py",
+        "role": "materialized_topology_report_contract"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/verifier_pkg/verifier/auditor_toolkit/graph.py",
+        "role": "materialized_graph_with_active_topology_override"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/verifier_pkg/verifier/auditor_toolkit/validation.py",
+        "role": "materialized_topology_report_validator"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/verifier_pkg/verifier/auditor_toolkit/cli.py",
+        "role": "materialized_topology_command_entry_points"
+      }
+    ],
+    "historical_manifests": [
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/source_snapshot.json",
+        "role": "recorded_august3_source_selection_and_task_hashes"
+      },
+      {
+        "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_task_index_v3.json",
+        "role": "source_to_topology_task_mapping_and_recorded_digests"
+      },
+      {
+        "path": "verifier/runs/20260904_r1_r2_reviewer_response/r1_cross_vendor_audit/selection_manifest.json",
+        "role": "r1_source_snapshots_and_source_drift_log"
+      }
+    ],
+    "source_snapshot": {
+      "captured_on": "2026-09-06",
+      "hash_algorithm": "sha256",
+      "scope": "Current local bytes of these ten explicitly inspected source files only. This is limited release provenance, not a whole-release manifest, full historical-task verification, or proof of original experimental bytes. Recompute after any source or line-ending change before packaging.",
+      "files": [
+        {
+          "path": "verifier/runs/20260831_v3_fresh_100_topology/prepare_topology.py",
+          "sha256": "c5310fff8df0c552d50ec932e412404c777c2c91e88dfe8445cae3c0a7d33a0c"
+        },
+        {
+          "path": "verifier/runs/20260831_v3_fresh_100_topology/run_auditors.py",
+          "sha256": "595cbad00c1f60c33dc3a0c73b2def2c26365a70d2627bf1e59577e75a8ffe66"
+        },
+        {
+          "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/instruction.md",
+          "sha256": "d7edb680637bf54dd0cb6197e3d209a518f4cd7f6d6e2d1fabf477f09c40bcf3"
+        },
+        {
+          "path": "verifier/runs/20260831_v3_fresh_100_topology/auditor_tasks_v3/audit_001_kpi_gaming/environment/verifier_pkg/verifier/auditor_toolkit/graph.py",
+          "sha256": "2823455ab79c262d5b1d0216bc59f549d8205f76e89716d876c2697be4751194"
+        },
+        {
+          "path": "verifier/orchestrator/materialize.py",
+          "sha256": "2ed05a7354ed8b89fb239eaa952a9d827cc0414620895b4a56d73a5935a3d732"
+        },
+        {
+          "path": "verifier/harbor_tasks/auditor_template/instruction.md",
+          "sha256": "9363e86b6f28f8e0b5f9227cac103101519b061ac620bf4f6e2c9f41a2b03b7c"
+        },
+        {
+          "path": "verifier/schemas/report.py",
+          "sha256": "ac7655cb0463fe59f4ccb296acd2a3d9e5436686240fde3a76bee0d0169b8241"
+        },
+        {
+          "path": "verifier/auditor_toolkit/validation.py",
+          "sha256": "5acaad305b67a68a9b6f5ad5625e3cd08e29a403f0e5c32c29a1fa14f563c5b3"
+        },
+        {
+          "path": "verifier/auditor_toolkit/cli.py",
+          "sha256": "871ec9c926fea68ad838b4971052cf155eac438856584c02815c36cf9aaff2d3"
+        },
+        {
+          "path": "verifier/runs/20260904_r1_r2_reviewer_response/pipeline.py",
+          "sha256": "7deea96f5ef9f95c12318590ebdcc7fa01fa8f9ec76d67c65410711bec5d742d"
+        }
+      ]
+    },
+    "notes": [
+      "Full means deterministic investigation tools, the V3 report contract, and mandatory pre-submission validation remain present. Topology is a navigation index over nodes and time/channel/step/edge references, not semantic evidence; content summaries, inferred provenance, and risk annotations are excluded.",
+      "No-graph is a supported ablation that removes graph access but retains raw evidence, non-graph tools, report schema, and validator. It is distinct from R2 naive free text, which removes the toolkit, schema, and validator. No statistical superiority is claimed for the release selection.",
+      "The September 4 R1 preparation copies the August 3 V3 pilot tasks, not the August 31 topology-only task tree. R1/R2 supports the full-contract provenance trace; it is not a direct rerun of the selected topology-only variant.",
+      "The R1/R2 narrative reports completed model execution but outstanding substantive human worksheets; the generated English companion still says INCOMPLETE. Mechanical citation resolvability is not substantive risk recovery or evidence that all additional findings have been adjudicated.",
+      "The current shared graph source contains the legacy annotated implementation. The selected topology behavior is defined by prepare_topology.py and its materialized tasks; the unchanged generic verifier CLI must not be assumed to select it automatically. Runtime integration is outside these provenance-only files.",
+      "The materialized reference task retains the report schema and bundle-context validator: resolvable steps and edges, verbatim quotes, time-ordered propagation, and valid mitigation targets. Its Dockerfile installs the nine listed command wrappers and omits the trace-provenance launcher.",
+      "R2 pins controls from actually executed naive tasks because the earlier instruction constant changed after execution. The R1/R2 report also records line-ending-only source drift and manifest rebaselining; historical recorded digests and the limited current source hashes have different scopes and are not interchangeable.",
+      "Undated verifier reports have report_date=null; run_date comes from the experiment directory label, not filesystem modification time. The no-graph body explicitly records a September 3 table correction.",
+      "Auditors are open-ended risk discoverers. A fixed judge measures only its preregistered narrow target; additional findings require separate review as substantively adjacent interaction risk, operational failure, or material impact not yet confirmed."
+    ]
+  }
+}

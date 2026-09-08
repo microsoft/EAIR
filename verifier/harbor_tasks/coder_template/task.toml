@@ -1,0 +1,24 @@
+schema_version = "1.4"
+artifacts = ["/app/env/", "/app/repair_report.json"]
+
+[task]
+name = "org/interaction-risk-coder"
+version = "1.0.0"
+description = "Implement an auditor-authored mitigation plan and document the repair."
+
+[agent]
+timeout_sec = 3600.0
+network_mode = "allowlist"
+allowed_hosts = ["trapi.research.microsoft.com"]
+
+[environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800.0
+
+[verifier.environment]
+network_mode = "no-network"
+build_timeout_sec = 900.0

@@ -1,0 +1,17 @@
+# Fast deterministic check across all three template domains.
+scenarios:
+  - D1_hr_01
+  - D1_finance_01
+  - D1_security_01
+model: gpt-4o-mini
+provider: openai
+episodes_per_condition: 1
+seed_start: 42
+temperature: 0.7
+use_mock: true
+conditions:
+  - name: vulnerable
+  - name: L1_authorization_propagation
+    authorization_propagation: true
+  - name: L3_tool_acl
+    tool_field_acl: true

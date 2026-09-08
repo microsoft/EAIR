@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Enterprise Agent Risk (EAIR) documentation: CLI, five research worlds, custom environments, V3 auditing, and isolated mitigation.">
+  <title>Enterprise Agent Risk (EAIR) | Documentation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/lucide.min.js" defer></script>
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="icon-button mobile-menu" id="menu-toggle" type="button" aria-label="Open navigation" title="Open navigation" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
+      <a class="brand" href="#quickstart" aria-label="Enterprise Agent Risk (EAIR) documentation home">
+        <span class="brand-name">EAIR<span>Enterprise Agent Risk</span></span>
+      </a>
+      <span class="header-divider" aria-hidden="true"></span>
+      <span class="header-label" data-i18n="documentation">Documentation</span>
+      <button class="search-trigger" id="search-open" type="button" aria-label="Search documentation" title="Search documentation"><i data-lucide="search" aria-hidden="true"></i><span data-i18n="searchPlaceholder">Search documentation</span></button>
+      <div class="header-actions">
+        <span class="version-label" id="version">Toolkit</span>
+        <button class="icon-button" id="print-page" type="button" aria-label="Print this page" title="Print this page"><i data-lucide="printer" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </header>
+  <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Close navigation" hidden></button>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
+      <div class="sidebar-label"><span class="status-line" aria-hidden="true"></span><span data-i18n="guideLabel">EAIR GUIDE</span></div>
+      <nav id="navigation" aria-label="Guides"></nav>
+      <div class="sidebar-bottom"><i data-lucide="terminal" aria-hidden="true"></i><code>eair docs</code></div>
+    </aside>
+    <main class="main-content" id="main-content" tabindex="-1">
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <article id="article" aria-live="polite">
+        <h1>Enterprise Agent Risk Documentation</h1>
+        <p>Loading the local toolkit guide.</p>
+      </article>
+      <nav class="page-pagination" id="pagination" aria-label="Previous and next page"></nav>
+      <footer class="page-footer"><span id="footer-version"></span><a href="#reproducibility" data-i18n="researchBoundaries">Research and release boundaries</a></footer>
+    </main>
+    <aside class="page-outline" aria-label="On this page"><p data-i18n="onThisPage">ON THIS PAGE</p><nav id="outline"></nav><a class="outline-cli" href="#cli"><i data-lucide="square-terminal" aria-hidden="true"></i><span data-i18n="cliReference">CLI reference</span></a></aside>
+  </div>
+  <dialog id="search-dialog" aria-labelledby="search-title">
+    <h2 id="search-title" class="sr-only">Search documentation</h2>
+    <div class="search-input-row"><i data-lucide="search" aria-hidden="true"></i><input id="search-query" type="search" autocomplete="off" spellcheck="false" placeholder="Search documentation" aria-label="Search documentation"><button class="icon-button" id="search-close" type="button" aria-label="Close search" title="Close search"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <div class="search-results" id="search-results"></div>
+  </dialog>
+  <div id="copy-status" class="sr-only" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript-notice">This offline guide needs JavaScript for navigation. The CLI remains available: <code>eair --help</code>.</div></noscript>
+</body>
+</html>

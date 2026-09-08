@@ -1,0 +1,13 @@
+# Mock (no API key needed) — verifies the run -> judge -> analyze pipeline.
+condition:
+  - A
+  - B
+  - C
+  - D
+  - E
+seeds: 2
+seed_start: 42
+model: gpt-4o-mini
+provider: openai
+temperature: 0.7
+use_mock: true

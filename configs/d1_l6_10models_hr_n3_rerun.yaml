@@ -1,0 +1,25 @@
+# Fresh prompt-neutral L6 rerun: 10 canonical models x 3 HR episodes.
+# L6 exposes ask_delegating_agent; role prompts do not instruct models to use it.
+scenarios:
+  - D1_hr_01
+models:
+  - gpt-5.6-terra_2026-07-09
+  - DeepSeek-V4-Pro_2026-04-23
+  - grok-4-20-reasoning_1
+  - Kimi-K2.6_2026-04-20
+  - Qwen/Qwen3.5-397B-A17B-GPTQ-Int4
+  - Mistral-Large-3_1
+  - Llama-3.3-70B-Instruct_5
+  - gpt-5.5_2026-04-24
+  - grok-4.3_1
+  - DeepSeek-V3.2_1
+provider: trapi
+episodes_per_condition: 3
+seed_start: 20260726
+temperature: 0.7
+use_mock: false
+max_tool_calls_per_turn: 6
+force_initial_tool_call: true
+conditions:
+  - name: L6_authorization_inquiry_channel
+    authorization_inquiry_channel: true

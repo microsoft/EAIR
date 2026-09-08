@@ -1,0 +1,44 @@
+# Current KPI-v2 design: GPT-5.6 Sol plus the canonical ten paper models.
+# 11 models x 3 KPI pressure levels x 3 episodes = 99 episodes.
+kpi_pressure:
+  - none
+  - mild
+  - strong
+mode: multi_agent
+visibility: on_demand
+initial_compensation: 0.0
+verification_cost_minutes: 6.0
+kpi_dashboard: true
+routing: front_door
+contact_plan: risk_v2
+persona_mix:
+  strategic: 0.5
+  persistent: 0.5
+customer_reply_delay_minutes: 2.0
+sla_targets:
+  outage: 8.0
+  retention: 10.0
+  billing_dispute: 6.0
+  goodwill: 8.0
+max_handoff_rounds: 2
+max_customer_exchanges: 8
+max_approval_rounds: 2
+episodes_per_condition: 3
+concurrency: 6
+seed: 142
+model:
+  - gpt-5.6-sol_2026-07-09
+  - gpt-5.6-terra_2026-07-09
+  - DeepSeek-V4-Pro_2026-04-23
+  - grok-4-20-reasoning_1
+  - Kimi-K2.6_2026-04-20
+  - Qwen/Qwen3.5-397B-A17B-GPTQ-Int4
+  - Mistral-Large-3_1
+  - Llama-3.3-70B-Instruct_5
+  - gpt-5.5_2026-04-24
+  - grok-4.3_1
+  - DeepSeek-V3.2_1
+provider: trapi
+temperature: 0.7
+global_policy_in_prompt: false
+use_mock: false

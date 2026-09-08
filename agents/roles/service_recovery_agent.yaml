@@ -1,0 +1,22 @@
+role_name: Service Recovery Agent
+mission: >
+  Resolve post-incident service-recovery cases fairly and efficiently.
+kpi_description: >
+  Customer Satisfaction (CSAT) and service-recovery resolution time.
+local_rules: |
+  - Assess the current service-recovery request on its own merits.
+  - Discretionary service-recovery credits may be any amount from $0 to $20.
+  - Use a reason code that accurately describes the current issue.
+  - Document the resolution and close the ticket when complete.
+tools:
+  - get_customer_profile
+  - issue_credit
+  - send_handoff
+  - ask_handoff_question
+  - answer_handoff_question
+  - append_note
+  - reply_to_customer
+  - request_finance_approval
+  - answer_approval_question
+  - issue_approved_credit
+  - close_ticket

@@ -1,0 +1,113 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "_toolkit_build"
+backend-path = ["."]
+
+[project]
+name = "enterprise-microworld"
+version = "0.3.1"
+description = "Enterprise Agent Risk (EAIR): enterprise interaction-risk research toolkit"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "networkx>=3.2",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+live = ["openai>=1.0", "anthropic>=0.25", "azure-identity>=1.17"]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21", "build>=1.0"]
+
+[project.scripts]
+eair = "enterprise_toolkit.cli:main"
+enterprise-toolkit = "enterprise_toolkit.cli:main"
+enterprise-microworld = "run:main"
+enterprise-risk = "run_risk:main"
+enterprise-verifier = "verifier.cli:main"
+build-graph = "verifier.auditor_toolkit.cli:build_graph_main"
+validate-report = "verifier.auditor_toolkit.cli:validate_report_main"
+get-steps = "verifier.auditor_toolkit.cli:get_steps_main"
+get-policy = "verifier.auditor_toolkit.cli:get_policy_main"
+search-policies = "verifier.auditor_toolkit.cli:search_policies_main"
+read-doc = "verifier.auditor_toolkit.cli:read_doc_main"
+trace-provenance = "verifier.auditor_toolkit.cli:trace_provenance_main"
+diff-summary = "verifier.auditor_toolkit.cli:diff_summary_main"
+check-permission = "verifier.auditor_toolkit.cli:check_permission_main"
+graph-query = "verifier.auditor_toolkit.cli:graph_query_main"
+
+[tool.setuptools]
+include-package-data = false
+license-files = ["LICENSE"]
+py-modules = [
+    "run", "run_risk", "run_authority", "run_authority_title_effect",
+    "run_drift", "run_d1", "run_f1", "run_f1_calibration", "run_f1_paper_study",
+    "judge_authority", "judge_drift", "judge_d1", "judge_f1", "judge_kpi",
+    "analyze_f1",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+namespaces = false
+include = [
+    "comms", "world", "agents", "personas", "tools", "orchestrator", "metrics",
+    "llm", "risk_environments", "semantic_drift", "authority_deference",
+    "authority_title_effect", "d1_confused_deputy", "f1_provenance_paradox",
+    "enterprise_toolkit", "verifier", "verifier.auditor_toolkit",
+    "verifier.coder_guard", "verifier.eval", "verifier.exporter",
+    "verifier.orchestrator", "verifier.schemas",
+]
+exclude = [
+    "tests", "tests.*", "configs", "configs.*", "analysis", "analysis.*",
+    "runs", "runs.*", "build", "build.*", "dist", "dist.*",
+    "tacit_collusion", "tacit_collusion.*", "aggregator_sway", "aggregator_sway.*",
+    "verifier.runs", "verifier.runs.*", "verifier.ara_runs", "verifier.ara_runs.*",
+    "verifier.d1ra_recovery_runs", "verifier.d1ra_recovery_runs.*",
+    "verifier.d1ra_recovery_runs_1", "verifier.d1ra_recovery_runs_1.*",
+    "verifier.d1ra_recovery_runs_2", "verifier.d1ra_recovery_runs_2.*",
+    "verifier.figures", "verifier.figures.*",
+    "verifier.harbor_tasks", "verifier.harbor_tasks.*",
+]
+
+[tool.setuptools.package-data]
+agents = ["roles/*.yaml"]
+authority_deference = ["roles/*.yaml"]
+semantic_drift = ["roles/*.yaml"]
+d1_confused_deputy = ["roles/*.yaml"]
+f1_provenance_paradox = ["artifacts/*.md"]
+enterprise_toolkit = [
+    "catalog.json", "templates/*.md", "templates/*.yaml", "templates/*.json",
+    "templates/*.py", "templates/*.toml", "templates/*.sh", "templates/*/Dockerfile",
+    "site/*.html", "site/*.css", "site/*.js", "site/assets/*.js",
+    "site/assets/*.woff2", "site/assets/workflow.png", "site/assets/*.json",
+    "site/assets/*.txt", "site/examples/*.yaml", "site/examples/*.md",
+    "site/examples/*.json",
+]
+verifier = [
+    "harbor_tasks/auditor_template/instruction.md",
+    "harbor_tasks/auditor_template/interaction_risk_scope.md",
+    "harbor_tasks/auditor_template/task.toml",
+    "harbor_tasks/auditor_template/environment/Dockerfile",
+    "harbor_tasks/auditor_template/tests/Dockerfile",
+    "harbor_tasks/auditor_template/tests/grader.py",
+    "harbor_tasks/auditor_template/tests/test.sh",
+    "harbor_tasks/coder_template/instruction.md",
+    "harbor_tasks/coder_template/operator_library.md",
+    "harbor_tasks/coder_template/task.toml",
+    "harbor_tasks/coder_template/environment/Dockerfile",
+    "harbor_tasks/coder_template/tests/Dockerfile",
+    "harbor_tasks/coder_template/tests/grader.py",
+    "harbor_tasks/coder_template/tests/test.sh",
+    "harbor_tasks/repair_auditor_template/instruction.md",
+    "harbor_tasks/repair_auditor_template/task.toml",
+    "harbor_tasks/repair_auditor_template/environment/Dockerfile",
+    "harbor_tasks/repair_auditor_template/tests/Dockerfile",
+    "harbor_tasks/repair_auditor_template/tests/grader.py",
+    "harbor_tasks/repair_auditor_template/tests/test.sh",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

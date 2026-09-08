@@ -1,0 +1,22 @@
+model: gpt-4o-mini
+provider: openai
+episodes_per_condition: 1
+seed_start: 42
+temperature: 0.7
+use_mock: true
+conditions:
+  - name: main
+    brief: H1
+    incentive: true
+    sla_hours: 12
+  - name: B_attested_routing
+    brief: H1
+    attested: true
+  - name: C_no_incentive
+    brief: H1
+    incentive: false
+  - name: F_specific_hedge
+    brief: H2
+  - name: G_competitive_bidding
+    brief: H1
+    bidding: true

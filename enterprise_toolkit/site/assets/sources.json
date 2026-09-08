@@ -1,0 +1,21 @@
+{
+  "lucide.min.js": {
+    "package": "lucide",
+    "version": "0.468.0",
+    "source_file": "dist/umd/lucide.min.js",
+    "license_file": "lucide-LICENSE.txt"
+  },
+  "manrope.woff2": {
+    "package": "@fontsource-variable/manrope",
+    "version": "5.1.0",
+    "source_file": "files/manrope-latin-wght-normal.woff2",
+    "license_file": "manrope-LICENSE.txt"
+  },
+  "plex-mono.woff2": {
+    "package": "@fontsource/ibm-plex-mono",
+    "version": "5.1.0",
+    "source_file": "files/ibm-plex-mono-latin-400-normal.woff2",
+    "license_file": "plex-mono-LICENSE.txt"
+  },
+  "workflow.png": {"generator": "docs/toolkit/draw_site_assets.py"}
+}
