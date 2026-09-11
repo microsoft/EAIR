@@ -25,6 +25,7 @@ SOURCE_TESTS = (
     "tests/test_verifier_release_profiles.py",
     "tests/check_installed_toolkit.py",
     "tests/test_toolkit_docs.py",
+    "tests/test_toolkit_integration.py",
 )
 PAPER_IDS = frozenset({"A1", "B1", "C1", "D1", "F1"})
 HISTORICAL_CONFIG = (

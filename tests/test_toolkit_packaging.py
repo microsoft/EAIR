@@ -31,7 +31,7 @@ def test_release_declarations_include_real_study_code():
     settings = metadata["tool"]["setuptools"]
     modules = set(settings["py-modules"])
     packages = settings["packages"]["find"]
-    assert project["version"] == "0.3.1"
+    assert project["version"] == "0.3.2"
     assert enterprise_toolkit.__version__ == project["version"] == resources.load_catalog()["release_version"]
     assert project["readme"] == "README.md"
     assert project["license"] == {"file": "LICENSE"}

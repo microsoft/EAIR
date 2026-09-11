@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "release_version": "0.3.1",
+  "release_version": "0.3.2",
   "excluded_risks": ["A2", "B2"],
   "source_registry": "risk_environments/registry.py",
   "selection_policy": "Report-derived study coverage, not a claim of statistical superiority. Runtime fields describe the current registry; historical study runners are recorded separately.",
@@ -76,7 +76,8 @@
         "These YAMLs specify individual model settings; model overrides and study orchestration are needed to reconstruct the reported cross-model matrices. The registry run_module is the current smoke/runtime entry point, not the historical title-effect study runner.",
         "The August 4 liveness report includes August 18, 19, and 20 updates. Its August 20 fresh20 is a distinct post-mitigation A-E workflow follow-up, not a replacement for the 480-episode ABCD study or factorial pilot.",
         "The fresh20 update reports final fields submitted in 20/20 episodes but all five sections present in only 7/20; upstream SRE finalization remains unresolved.",
-        "Current source and YAML bytes are not asserted to be identical to the original historical experiment snapshots."
+        "Current source and YAML bytes are not asserted to be identical to the original historical experiment snapshots.",
+        "ABCD and EFGH runs now record meta.json, audit_context.json, and ordered events.jsonl for the study-specific verifier adapter. Older recordings without these files must be rerun in a new output directory; the legacy four-role Authority adapter is not substituted."
       ]
     },
     {

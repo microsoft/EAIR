@@ -43,27 +43,16 @@ def _prompts(episode_dir: Path) -> dict[str, str]:
     return prompts
 
 
-def _historical_tool_permissions(episode_dir: Path) -> dict[str, set[str]]:
-    permissions: dict[str, set[str]] = {}
+def _tool_inventory(permissions: dict[str, list[str]], episode_dir: Path) -> set[str]:
+    selected = {tool for tools in permissions.values() for tool in tools}
     for path in sorted((episode_dir / "trajectories").glob("*.json")):
         trajectory = AgentTrajectory.load(path)
-        permissions[trajectory.agent] = {
+        selected.update(
             tool_call.name
             for turn in trajectory.turns
             for tool_call in turn.tool_calls
-        }
-    return permissions
-
-
-def _merge_historical_tool_permissions(
-    permissions: dict[str, list[str]],
-    episode_dir: Path,
-) -> dict[str, list[str]]:
-    historical = _historical_tool_permissions(episode_dir)
-    return {
-        role: sorted(set(tools) | historical.get(role, set()))
-        for role, tools in permissions.items()
-    }
+        )
+    return selected
 
 
 def _title(identifier: str) -> str:
@@ -164,19 +153,22 @@ def _snapshot(
 
 def _kpi_snapshot(episode_dir: Path) -> SourceSnapshot:
     from agents.roles import load_role_card
-    from orchestrator.episode import ROLE_TOOLS
+    from orchestrator.episode import EpisodeConfig, episode_role_tools
     from tools.registry import _all_tool_definitions
     from world.policy import render_policy_document
 
+    config = _load_json(episode_dir / "meta.json").get("config", {})
+    permissions = episode_role_tools(EpisodeConfig(**{
+        key: config[key] for key in ("mode", "contact_plan", "visibility") if key in config
+    }))
     prompts = _prompts(episode_dir)
-    permissions = {
-        role: list(tools) for role, tools in ROLE_TOOLS.items() if role in prompts
-    }
-    permissions = _merge_historical_tool_permissions(permissions, episode_dir)
+    unexpected = set(prompts) - set(permissions)
+    if unexpected:
+        raise ValueError(f"KPI episode has unexpected role trajectories: {sorted(unexpected)}")
     roles = _roles_from_prompts(prompts, permissions, {
         role: load_role_card(role)["role_name"] for role in permissions
     })
-    selected_tools = {tool for values in permissions.values() for tool in values}
+    selected_tools = _tool_inventory(permissions, episode_dir)
     document_files = [
         "ledger.json", "tickets.json", "invoice_ground_truth.json",
         "invoice_adjustments.json", "kpi_timeline.json", "timeline.json",
@@ -199,10 +191,10 @@ def _kpi_snapshot(episode_dir: Path) -> SourceSnapshot:
         documents,
         {name: list(permissions) for name in documents},
         SourceInventory(
-            role_ids=set(ROLE_TOOLS), policy_ids={"compensation_policy"},
+            role_ids=set(permissions), policy_ids={"compensation_policy"},
             tool_ids=selected_tools, document_ids={Path(name).stem for name in document_files},
         ),
-        {"message_log": "events.jsonl", "memory": "private per role", "config": _load_json(episode_dir / "meta.json").get("config", {})},
+        {"message_log": "events.jsonl", "memory": "private per role", "config": config},
         "Resolve customer contacts while following compensation and billing policy.",
     )
 
@@ -212,18 +204,22 @@ def _authority_snapshot(episode_dir: Path) -> SourceSnapshot:
     from authority_deference.roles import ALL_ROLES, load_role_card
     from authority_deference.tools import _all_tool_definitions
 
+    artifacts = _load_json(episode_dir / "artifacts.json")
+    if artifacts.get("protocol_version") in {
+        "realistic_organizational_power_v4", "organizational_power_factorial_v5"
+    }:
+        return _authority_study_snapshot(episode_dir, artifacts)
     meta = _load_json(episode_dir / "meta.json")
     prompts = _prompts(episode_dir)
     permissions = {role: list(load_role_card(role).get("tools", [])) for role in ALL_ROLES}
     if meta.get("raw_log_permission_boundary"):
         for tools in permissions.values():
             tools.append("request_raw_logs")
-    permissions = _merge_historical_tool_permissions(permissions, episode_dir)
     roles = _roles_from_prompts(prompts, permissions, {
         role: load_role_card(role)["role_name"] for role in ALL_ROLES
     })
     documents = {**LOG_SOURCES, **DOCUMENTS}
-    selected_tools = {tool for values in permissions.values() for tool in values}
+    selected_tools = _tool_inventory(permissions, episode_dir)
     return _snapshot(
         "authority_deference",
         "Sequential enterprise incident review over a shared evidence channel.",
@@ -242,6 +238,87 @@ def _authority_snapshot(episode_dir: Path) -> SourceSnapshot:
     )
 
 
+def _authority_study_snapshot(episode_dir: Path, artifacts: dict[str, Any]) -> SourceSnapshot:
+    from authority_title_effect.orchestrator import ROLES
+
+    context = _load_json(episode_dir / "audit_context.json")
+    metadata = _load_json(episode_dir / "meta.json")
+    if not context or not (episode_dir / "events.jsonl").is_file():
+        raise ValueError(
+            "Authority study requires its recorded audit_context.json and events.jsonl; "
+            "rerun the study in a new output directory with the current toolkit"
+        )
+    if context.get("schema_version") != "1":
+        raise ValueError("unsupported Authority study audit context version")
+    for field in ("episode_id", "protocol_version", "role", "condition"):
+        if not artifacts.get(field) or artifacts[field] != context.get(field) or artifacts[field] != metadata.get(field):
+            raise ValueError(f"Authority study context mismatch: {field}")
+    reviewer = context["role"]
+    if reviewer not in ROLES:
+        raise ValueError(f"unknown Authority study reviewer: {reviewer}")
+    role_ids = [reviewer, "reporter_agent"]
+    prompts = _prompts(episode_dir)
+    if set(prompts) != set(role_ids):
+        raise ValueError(f"Authority study requires exactly these role trajectories: {role_ids}")
+    stages = context["tool_stages"]
+    if set(stages) != set(role_ids) or set(context["role_titles"]) != set(role_ids):
+        raise ValueError("Authority study role context is incomplete")
+    expected_stages = {
+        reviewer: {"private_initial", "workplace_review", "public_submission"},
+        "reporter_agent": {"announcement", "response"},
+    }
+    permissions = {}
+    definitions = {}
+    for role in role_ids:
+        if set(stages[role]) != expected_stages[role]:
+            raise ValueError(f"Authority study tool stages are incomplete for {role}")
+        names = set()
+        for schemas in stages[role].values():
+            if not isinstance(schemas, list) or not schemas:
+                raise ValueError(f"Authority study tool schemas are missing for {role}")
+            for schema in schemas:
+                function = schema["function"]
+                name = function["name"]
+                names.add(name)
+                definitions[name] = (function["description"], function["parameters"], None)
+        permissions[role] = sorted(names)
+    selected_tools = _tool_inventory(permissions, episode_dir)
+    policies = [
+        Policy(policy_id=name, text=text, applies_to=[reviewer])
+        for name, text in context["policies"].items()
+    ]
+    if {policy.policy_id for policy in policies} != {"incident_review_runbook", "organizational_context"}:
+        raise ValueError("Authority study policies are incomplete")
+    documents = context["documents"]
+    if not documents or set(documents) != set(context["document_acl"]):
+        raise ValueError("Authority study document inventory is incomplete")
+    return _snapshot(
+        "authority_title_effect",
+        "Independent incident review with a Reporter, confidential assessments, and an attributable public submission.",
+        _roles_from_prompts(prompts, permissions, context["role_titles"]),
+        policies,
+        {
+            "nodes": role_ids,
+            "edges": [
+                {"src": "reporter_agent", "dst": reviewer, "channel": "incident_channel"},
+                {"src": reviewer, "dst": "reporter_agent", "channel": "incident_channel"},
+            ],
+        },
+        _tool_specs(definitions, selected_tools),
+        documents, context["document_acl"],
+        SourceInventory(
+            role_ids=set(role_ids), policy_ids={policy.policy_id for policy in policies},
+            tool_ids=selected_tools, document_ids=set(documents),
+        ),
+        {
+            "message_log": "events.jsonl", "protocol_version": context["protocol_version"],
+            "tool_stages": stages, "private_assessments_visible_to_reporter": False,
+        },
+        context["task_spec"],
+        {"completion_status": "completed", "public_action": artifacts["public_submission"]["action"]},
+    )
+
+
 def _drift_snapshot(episode_dir: Path) -> SourceSnapshot:
     from semantic_drift.ground_truth import env_facts_block, get_scenario
     from semantic_drift.roles import ALL_ROLES, load_role_card
@@ -252,12 +329,11 @@ def _drift_snapshot(episode_dir: Path) -> SourceSnapshot:
     scenario = get_scenario(str(meta.get("scenario", "weak")))
     prompts = _prompts(episode_dir)
     permissions = {role: list(load_role_card(role).get("tools", [])) for role in ALL_ROLES}
-    permissions = _merge_historical_tool_permissions(permissions, episode_dir)
     roles = _roles_from_prompts(prompts, permissions, {
         role: load_role_card(role)["role_name"] for role in ALL_ROLES
     })
     documents = {"meeting_transcript": scenario.transcript_for(condition)}
-    selected_tools = {tool for values in permissions.values() for tool in values}
+    selected_tools = _tool_inventory(permissions, episode_dir)
     return _snapshot(
         "semantic_drift",
         "Fork-merge sales workflow carrying deal terms through CRM, forecast, finance, and customer communication.",
@@ -301,7 +377,6 @@ def _d1_snapshot(episode_dir: Path) -> SourceSnapshot:
         role: [schema["function"]["name"] for schema in build_d1_tool_registry(context, role).get_schemas()]
         for role in role_ids
     }
-    permissions = _merge_historical_tool_permissions(permissions, episode_dir)
     roles = _roles_from_prompts(prompts, permissions)
     definitions = {
         schema["function"]["name"]: (schema["function"]["description"], {}, None)
@@ -322,7 +397,7 @@ def _d1_snapshot(episode_dir: Path) -> SourceSnapshot:
             indent=2,
         ),
     }
-    selected_tools = {tool for values in permissions.values() for tool in values}
+    selected_tools = _tool_inventory(permissions, episode_dir)
     return _snapshot(
         "d1_confused_deputy",
         f"Two-role delegation workflow for the {scenario.domain} domain.",
@@ -358,7 +433,6 @@ def _f1_snapshot(episode_dir: Path) -> SourceSnapshot:
         role: [schema["function"]["name"] for schema in build_f1_tool_registry(context, role).get_schemas()]
         for role in role_ids
     }
-    permissions = _merge_historical_tool_permissions(permissions, episode_dir)
     roles = _roles_from_prompts(prompts, permissions, {
         "procurement_orchestrator": "Procurement Operations Coordinator",
         "legal_review_agent": "Senior Legal Review Agent",
@@ -391,7 +465,7 @@ def _f1_snapshot(episode_dir: Path) -> SourceSnapshot:
         )
         for filename in POLICY_FILES
     ]
-    selected_tools = {tool for values in permissions.values() for tool in values}
+    selected_tools = _tool_inventory(permissions, episode_dir)
     return _snapshot(
         "f1_provenance_paradox",
         "Procurement workflow for capability bidding, delegated review, executive summarization, and approval.",

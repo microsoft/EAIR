@@ -1,5 +1,5 @@
 globalThis.TOOLKIT_DOCS = {
-  "version": "0.3.1",
+  "version": "0.3.2",
   "pages": [
     {
       "id": "quickstart",
@@ -16,7 +16,7 @@ globalThis.TOOLKIT_DOCS = {
         {
           "id": "install",
           "title": "1. Install the toolkit",
-          "body": "<p>Run from the folder containing <code>dist/</code>. A virtual environment is recommended; see <a href=\"#installation\">Installation</a> for platform-specific steps.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install dist/enterprise_microworld-0.3.1-py3-none-any.whl\neair --version\neair list</code></pre></figure>"
+          "body": "<p>Run from the folder containing <code>dist/</code>. A virtual environment is recommended; see <a href=\"#installation\">Installation</a> for platform-specific steps.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install dist/enterprise_microworld-0.3.2-py3-none-any.whl\neair --version\neair list</code></pre></figure>"
         },
         {
           "id": "first-run",
@@ -55,7 +55,7 @@ globalThis.TOOLKIT_DOCS = {
         {
           "id": "package",
           "title": "Install a wheel or source release",
-          "body": "<p>Use the actual release filename supplied to you. The wheel is self-contained for offline use; it includes the website, selected configs, role assets, and Harbor templates.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install dist/enterprise_microworld-0.3.1-py3-none-any.whl\neair --version\neair list</code></pre></figure><p>From an unpacked source release instead:</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install .\neair docs</code></pre></figure><p>The primary command is <code>eair</code>. The distribution name <code>enterprise-microworld</code>, Python module <code>enterprise_toolkit</code>, and legacy <code>enterprise-toolkit</code> command remain compatible. If a console command is not on PATH, use <code>python -m enterprise_toolkit</code> with the same subcommands.</p>"
+          "body": "<p>Use the actual release filename supplied to you. The wheel is self-contained for offline use; it includes the website, selected configs, role assets, and Harbor templates.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install dist/enterprise_microworld-0.3.2-py3-none-any.whl\neair --version\neair list</code></pre></figure><p>From an unpacked source release instead:</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install .\neair docs</code></pre></figure><p>The primary command is <code>eair</code>. The distribution name <code>enterprise-microworld</code>, Python module <code>enterprise_toolkit</code>, and legacy <code>enterprise-toolkit</code> command remain compatible. If a console command is not on PATH, use <code>python -m enterprise_toolkit</code> with the same subcommands.</p>"
         },
         {
           "id": "extras",
@@ -128,7 +128,7 @@ globalThis.TOOLKIT_DOCS = {
         {
           "id": "a1",
           "title": "A1: Authority Bias",
-          "body": "<p>The first recommended config uses <code>realistic_organizational_power_v4</code> (ABCD). The second uses <code>organizational_power_factorial_v5</code> (EFGH). <code>study A1</code> routes to the title-effect runner, not the older multi-role smoke implementation.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">eair study A1 --out runs/a1-study\neair study A1 --mock --execute --out runs/a1-study-mock\neair study A1 --index 2 --out runs/a1-factorial</code></pre></figure><p>The reports cover 480 ABCD episodes and a separate 48-episode factorial pilot. Each YAML specifies an individual model setting; recreating the cross-model matrix requires deliberate model configuration. The August 20 fresh20 supplemental YAML describes a distinct isolated mitigation follow-up, not a drop-in replacement for either study.</p>"
+          "body": "<p>The first recommended config uses <code>realistic_organizational_power_v4</code> (ABCD). The second uses <code>organizational_power_factorial_v5</code> (EFGH). <code>study A1</code> routes to the title-effect runner, not the older multi-role smoke implementation.</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">eair study A1 --out runs/a1-study\neair study A1 --mock --execute --out runs/a1-study-mock\neair study A1 --index 2 --out runs/a1-factorial</code></pre></figure><p>Each study episode now records <code>audit_context.json</code>, <code>meta.json</code>, and globally ordered <code>events.jsonl</code>. Export the individual episode with <code>eair verify export authority_bias</code>. Older recordings lacking this context need a fresh run in a new output directory; missing source context and event order are not inferred.</p><p>The reports cover 480 ABCD episodes and a separate 48-episode factorial pilot. Each YAML specifies an individual model setting; recreating the cross-model matrix requires deliberate model configuration. The August 20 fresh20 supplemental YAML describes a distinct isolated mitigation follow-up, not a drop-in replacement for either study.</p>"
         },
         {
           "id": "b1",
@@ -440,7 +440,7 @@ globalThis.TOOLKIT_DOCS = {
         {
           "id": "install",
           "title": "Install optional model adapters",
-          "body": "<p>The base package intentionally omits model SDKs. From a source release use <code>python -m pip install \".[live]\"</code>. With a wheel, request its extra explicitly:</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install &quot;dist/enterprise_microworld-0.3.1-py3-none-any.whl[live]&quot;</code></pre></figure>"
+          "body": "<p>The base package intentionally omits model SDKs. From a source release use <code>python -m pip install \".[live]\"</code>. With a wheel, request its extra explicitly:</p><figure class=\"code-block\"><figcaption><span>Terminal</span><button type=\"button\" class=\"icon-button copy-code\" aria-label=\"Copy code\" title=\"Copy code\"><i data-lucide=\"copy\" aria-hidden=\"true\"></i></button></figcaption><pre><code data-language=\"console\">python -m pip install &quot;dist/enterprise_microworld-0.3.2-py3-none-any.whl[live]&quot;</code></pre></figure>"
         },
         {
           "id": "backends",
@@ -1516,7 +1516,7 @@ globalThis.TOOLKIT_DOCS = {
   ],
   "catalog": {
     "schema_version": 1,
-    "release_version": "0.3.1",
+    "release_version": "0.3.2",
     "excluded_risks": [
       "A2",
       "B2"
@@ -1595,7 +1595,8 @@ globalThis.TOOLKIT_DOCS = {
           "These YAMLs specify individual model settings; model overrides and study orchestration are needed to reconstruct the reported cross-model matrices. The registry run_module is the current smoke/runtime entry point, not the historical title-effect study runner.",
           "The August 4 liveness report includes August 18, 19, and 20 updates. Its August 20 fresh20 is a distinct post-mitigation A-E workflow follow-up, not a replacement for the 480-episode ABCD study or factorial pilot.",
           "The fresh20 update reports final fields submitted in 20/20 episodes but all five sections present in only 7/20; upstream SRE finalization remains unresolved.",
-          "Current source and YAML bytes are not asserted to be identical to the original historical experiment snapshots."
+          "Current source and YAML bytes are not asserted to be identical to the original historical experiment snapshots.",
+          "ABCD and EFGH runs now record meta.json, audit_context.json, and ordered events.jsonl for the study-specific verifier adapter. Older recordings without these files must be rerun in a new output directory; the legacy four-role Authority adapter is not substituted."
         ]
       },
       {

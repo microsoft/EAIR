@@ -5,7 +5,7 @@ backend-path = ["."]
 
 [project]
 name = "enterprise-microworld"
-version = "0.3.1"
+version = "0.3.2"
 description = "Enterprise Agent Risk (EAIR): enterprise interaction-risk research toolkit"
 readme = "README.md"
 license = {file = "LICENSE"}

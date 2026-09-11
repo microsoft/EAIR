@@ -11,6 +11,40 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 
+EXPORT_CHECK = """
+import io
+import json
+import sys
+from contextlib import redirect_stdout
+from pathlib import Path
+from enterprise_toolkit.cli import main
+from verifier.auditor_toolkit.bundle import Bundle
+
+risk_id, source_root, destination_root = sys.argv[1:]
+destination = Path(destination_root)
+episodes = list(Path(source_root).rglob('meta.json'))
+assert episodes, 'No recorded episodes found'
+for position, metadata_path in enumerate(episodes):
+    output = io.StringIO()
+    with redirect_stdout(output):
+        assert main(['verify', 'export', risk_id, str(metadata_path.parent),
+                     '--bundles-root', str(destination / 'bundles'),
+                     '--manifests-root', str(destination / 'private')]) == 0
+    exported = json.loads(output.getvalue())
+    bundle = Bundle.load(Path(exported['bundle']))
+    assert bundle.trajectory.steps
+    task = destination / 'tasks' / str(position)
+    with redirect_stdout(io.StringIO()):
+        assert main(['verify', 'auditor-task', exported['bundle'], '-', exported['manifest'],
+                     str(task), '--discovery-only', '--profile', 'v3-topology']) == 0
+    assert Bundle.load(task / 'environment' / 'bundle').trajectory == bundle.trajectory
+    assert (task / 'tests' / 'manifest.json').is_file()
+    assert not (task / 'environment' / 'bundle' / 'manifest.json').exists()
+print(json.dumps({'episodes_exported': len(episodes), 'auditor_tasks_prepared': len(episodes),
+                  'semantic_audit_executed': False}))
+"""
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check an installed toolkit without checkout imports")
     parser.add_argument("--report", type=Path, required=True)
@@ -48,14 +82,14 @@ def main() -> int:
                 "from pathlib import Path",
                 "import enterprise_toolkit",
                 "from enterprise_toolkit.resources import load_catalog, resource_path, selected_config_paths",
-                "assert importlib.metadata.version('enterprise-microworld') == '0.3.1'",
-                "assert enterprise_toolkit.__version__ == '0.3.1'",
+                "assert importlib.metadata.version('enterprise-microworld') == '0.3.2'",
+                "assert enterprise_toolkit.__version__ == '0.3.2'",
                 "assert Path(enterprise_toolkit.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())",
                 "assert all(importlib.util.find_spec(name) is None for name in ('openai', 'anthropic', 'azure', 'harbor'))",
                 "assert len(selected_config_paths()) == 15",
                 "assert all(resource_path(name).is_file() for name in selected_config_paths())",
                 "assert all(yaml.safe_load(resource_path(world['smoke_config']).read_text(encoding='utf-8'))['use_mock'] is True for world in load_catalog()['worlds'])",
-                "print(json.dumps({'version': '0.3.1', 'package': enterprise_toolkit.__file__, 'presets': 15}))",
+                "print(json.dumps({'version': '0.3.2', 'package': enterprise_toolkit.__file__, 'presets': 15}))",
             ])])
             check("console-version", [toolkit, "--version"])
             listing = json.loads(check("five-world-catalog", [toolkit, "list", "--json"]))
@@ -79,12 +113,31 @@ def main() -> int:
                     rows = json.loads(result_path.read_text(encoding="utf-8"))
                     assert isinstance(rows, list) and rows, f"Empty or invalid results for {risk_id}"
                     assert not any(row.get("error") for row in rows), f"Execution errors in {risk_id} results"
+                check(f"export-and-audit-task-{risk_id}", [
+                    *python, "-c", EXPORT_CHECK, risk_id, str(working / risk_id),
+                    str(working / "audit-exports" / risk_id),
+                ])
             study_config = working / "a1-study.yaml"
             check("a1-config-export", [toolkit, "config", "A1", "--out", str(study_config)])
             check("a1-title-effect-study", [
                 *python, "-m", "run_authority_title_effect", "--config", str(study_config),
                 "--conditions", "A", "--seeds", "1", "--dry-run",
                 "--out", str(working / "a1-title-effect"),
+            ])
+            check("a1-title-effect-export-and-audit", [
+                *python, "-c", EXPORT_CHECK, "authority_bias", str(working / "a1-title-effect"),
+                str(working / "audit-exports" / "a1-title-effect"),
+            ])
+            factorial_config = working / "a1-factorial.yaml"
+            check("a1-factorial-config", [toolkit, "config", "A1", "--index", "2", "--out", str(factorial_config)])
+            check("a1-factorial-study", [
+                *python, "-m", "run_authority_title_effect", "--config", str(factorial_config),
+                "--conditions", "E", "--seeds", "1", "--dry-run",
+                "--out", str(working / "a1-factorial"),
+            ])
+            check("a1-factorial-export-and-audit", [
+                *python, "-c", EXPORT_CHECK, "authority_bias", str(working / "a1-factorial"),
+                str(working / "audit-exports" / "a1-factorial"),
             ])
             check("f1-calibration-study-entry", [*python, "-m", "run_f1_paper_study", "--help"])
             check("verifier-entry", [str(scripts / f"enterprise-verifier{suffix}"), "--help"])

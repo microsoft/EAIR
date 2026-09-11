@@ -45,6 +45,13 @@ coverage needs explicit model overrides/orchestration. The ordinary
 `enterprise-risk authority_bias` entry point is not a replacement for this
 study runner.
 
+Study episodes record their participants, stage-specific tools, policies, and
+documents in `audit_context.json`, together with `meta.json` and globally ordered
+`events.jsonl`. Pass the individual episode directory to
+`eair verify export authority_bias`. When upgrading from recordings that lack
+these files, use a new output directory and rerun the study; the exporter does
+not invent missing context or a global event order.
+
 The supplemental August 20 fresh20 YAML records a post-mitigation batch design.
 Its isolated repaired source and replacement-seed execution schedule are not
 reproduced by merely running that YAML against the unmodified toolkit. It is

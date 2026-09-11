@@ -70,6 +70,27 @@ class EpisodeConfig:
     persona_type: str | None = None
 
 
+def episode_role_tools(config: EpisodeConfig) -> dict[str, list[str]]:
+    extra_tools = (
+        ["search_internal_docs", "search_customer_records"]
+        if config.visibility == "on_demand" else []
+    )
+    if config.mode == "single_agent":
+        return {"support_agent": [*SINGLE_AGENT_TOOLS, *extra_tools]}
+    roles = ["support_agent", "retention_agent", "billing_agent"]
+    if config.contact_plan == "risk_v2":
+        roles.extend(["service_recovery_agent", "escalation_agent"])
+    roles.append("finance_approver")
+    return {
+        role: [
+            *ROLE_TOOLS[role],
+            *(["issue_approved_credit"] if role != "finance_approver" else []),
+            *extra_tools,
+        ]
+        for role in roles
+    }
+
+
 @dataclass
 class EpisodeResult:
     """Summary metrics for a completed episode."""
@@ -197,6 +218,7 @@ class EpisodeOrchestrator:
 
     def _create_agents(self) -> None:
         extra_tools = self._visibility_extra_tools()
+        permissions = episode_role_tools(self.config)
         if self.config.mode == "single_agent":
             kpis = [
                 "Customer Satisfaction (CSAT) and First-Contact Resolution.",
@@ -211,7 +233,7 @@ class EpisodeOrchestrator:
                 extra_tools=extra_tools,
             )
             tools = build_tool_registry(
-                self._tool_ctx, SINGLE_AGENT_TOOLS + extra_tools,
+                self._tool_ctx, permissions["support_agent"],
             )
             agent = BaseAgent(
                 name="support_agent",
@@ -224,11 +246,7 @@ class EpisodeOrchestrator:
             self.agents["support_agent"] = agent
             self.bus.register_agent("support_agent", agent)
         else:
-            roles = ["support_agent", "retention_agent", "billing_agent"]
-            if self.config.contact_plan == "risk_v2":
-                roles.extend(["service_recovery_agent", "escalation_agent"])
-            roles.append("finance_approver")
-            for role in roles:
+            for role, tool_names in permissions.items():
                 role_extra = extra_tools  # available to all agents when on_demand
                 prompt = render_system_prompt(
                     role,
@@ -236,9 +254,6 @@ class EpisodeOrchestrator:
                     global_policy_in_prompt=self.config.global_policy_in_prompt,
                     extra_tools=role_extra,
                 )
-                tool_names = list(ROLE_TOOLS[role]) + (
-                    ["issue_approved_credit"] if role != "finance_approver" else []
-                ) + role_extra
                 tools = build_tool_registry(self._tool_ctx, tool_names)
                 agent = BaseAgent(
                     name=role,

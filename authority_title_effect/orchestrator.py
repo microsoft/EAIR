@@ -11,11 +11,14 @@ from agents.base import BaseAgent
 from authority_deference.conditions import REPORTER_CLAIM_BASE, reporter_label
 from authority_deference.ground_truth import (
     AFFECTED_SERVICE,
+    DOCUMENTS,
     INCIDENT_DATE,
     INCIDENT_ID,
+    LOG_SOURCES,
     OUTAGE_END,
     OUTAGE_MINUTES,
     OUTAGE_START,
+    RUNBOOK,
 )
 from authority_title_effect.tools import (
     PowerTitleEffectToolContext,
@@ -29,6 +32,7 @@ from authority_title_effect.tools import (
     build_stage1_tools,
     build_stage2_tools,
 )
+from comms.events import register_event_recorder
 from comms.schema import Message
 from llm.client import LLMClient
 
@@ -462,6 +466,7 @@ class RealisticPowerTitleEffectEpisodeOrchestrator:
         )
         self.episode_dir = run_dir / self.episode_id
         self.episode_dir.mkdir(parents=True, exist_ok=True)
+        self.event_recorder = register_event_recorder(self.episode_id, self.episode_dir)
         self.tool_ctx = PowerTitleEffectToolContext(condition=config.condition)
         self.private_initial_tools = build_power_private_initial_tools(self.tool_ctx)
         self.workplace_tools = build_power_workplace_tools(self.tool_ctx)
@@ -485,6 +490,54 @@ class RealisticPowerTitleEffectEpisodeOrchestrator:
             temperature=config.temperature,
             max_tool_calls_per_turn=config.max_tool_calls_per_turn,
             tool_choice="required",
+        )
+
+        self._write_audit_context()
+
+    def _write_audit_context(self) -> None:
+        protocol = (
+            "organizational_power_factorial_v5"
+            if self.config.condition in FACTORIAL_POWER_CONDITIONS
+            else "realistic_organizational_power_v4"
+        )
+        metadata = {
+            "episode_id": self.episode_id, "protocol_version": protocol,
+            "role": self.config.role, "condition": self.config.condition,
+        }
+        (self.episode_dir / "meta.json").write_text(
+            json.dumps(metadata, indent=2), encoding="utf-8"
+        )
+        stages = {
+            self.config.role: {
+                "private_initial": self.private_initial_tools.get_schemas(),
+                "workplace_review": self.workplace_tools.get_schemas(),
+                "public_submission": self.public_tools.get_schemas(),
+            },
+            "reporter_agent": {
+                "announcement": self.reporter.tools.get_schemas(),
+                "response": build_power_reporter_response_tools(self.tool_ctx).get_schemas(),
+            },
+        }
+        context = {
+            **metadata,
+            "schema_version": "1",
+            "task_spec": NEUTRAL_INCIDENT_NOTICE,
+            "role_titles": {
+                self.config.role: ROLES[self.config.role],
+                "reporter_agent": _realistic_reporter_label(self.config.condition),
+            },
+            "tool_stages": stages,
+            "policies": {
+                "incident_review_runbook": RUNBOOK,
+                "organizational_context": self._organizational_context(),
+            },
+            "documents": {**LOG_SOURCES, **DOCUMENTS},
+            "document_acl": {
+                name: [self.config.role] for name in {*LOG_SOURCES, *DOCUMENTS}
+            },
+        }
+        (self.episode_dir / "audit_context.json").write_text(
+            json.dumps(context, indent=2, sort_keys=True), encoding="utf-8"
         )
 
     def _reviewer_system_prompt(self) -> str:
@@ -833,7 +886,7 @@ class RealisticPowerTitleEffectEpisodeOrchestrator:
         )
 
     def _message(self, sender: str, receiver: str, content: str, step: int) -> Message:
-        return Message(
+        message = Message(
             episode_id=self.episode_id,
             step=step,
             sender=sender,
@@ -841,6 +894,11 @@ class RealisticPowerTitleEffectEpisodeOrchestrator:
             msg_type="incident_channel",
             content=content,
         )
+        self.event_recorder.append(
+            "message_published", agent_id=sender, logical_step=step,
+            payload=message.model_dump(mode="json"),
+        )
+        return message
 
     def _write_llm_calls(self) -> None:
         path = self.episode_dir / "llm_calls.jsonl"
