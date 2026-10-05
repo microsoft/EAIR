@@ -91,6 +91,10 @@ python -m pytest tests -q
 python -m build
 ```
 
+## Responsible AI
+
+Before using EAIR, read our [Responsible AI Transparency documentation](TRANSPARENCY.md) for intended uses, limitations, evaluation details, safe-use guidance, and instructions for reporting unexpected or unsafe behavior.
+
 ## License and Security
 
 EAIR is licensed under the [MIT License](LICENSE). Third-party asset licenses are
